@@ -1,0 +1,51 @@
+version: "3"
+
+services:
+  app:
+    build: ./app
+    image: app
+    ports:
+    - "8756:8756"
+    volumes:
+      - ./app:/app
+
+  dev:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    image: dev
+    ports:
+      - "7777:7777"
+    volumes:
+      - ./app:/app
+
+  nginx:
+    build: ./nginx
+    image: bealge-nginx
+    ports: 
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    links:
+      - app
+
+  redis:
+    build: ./redis
+    image: beagle-redis
+
+  mongo:
+    build: ./mongo
+    image: bealge-mongo
+    ports:
+      - "27017:27017"
+
+  postgre:
+    image: mysql:8.0
+    restart: always
+    ports:
+      - "3303:3303"
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: 1234
+      MYSQL_DATABASE: Yumster
